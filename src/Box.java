@@ -19,7 +19,7 @@ public class Box extends GameObject {
     private void loadSprites() {
         try {
             // Use an absolute file path (temporary workaround)
-            File file = new File("C:/Users/User/Desktop/Java Game Test/Assets/MainCharacter(FreePack)/MainChar - idle.png");
+            File file = new File("C:/Users/User/Desktop/Java Game Test/Assets/8-Directioal Gameboy Character Template/gif/all.gif");
             System.out.println("Loading sprite sheet from: " + file.getAbsolutePath());
     
             // Check if the file exists
@@ -72,19 +72,24 @@ public class Box extends GameObject {
         } else if (vely < 0) {
             currentSpriteIndex = 0; // Up W
         }
+
+        // Debug statements
+        System.out.println("Box position: (" + x + ", " + y + ")");
+        System.out.println("Current sprite index: " + currentSpriteIndex);
     }
 
     @Override
-public void render(Graphics g) {
-    if (sprites == null || sprites[currentSpriteIndex] == null) {
-        // Fallback: Draw a black rectangle if the sprite fails to load
-        g.setColor(Color.black);
-        g.fillRect(x, y, spriteWidth, spriteHeight);
-        return;
-    }
+    public void render(Graphics g) {
+        if (sprites == null || sprites[currentSpriteIndex] == null) {
+            // Fallback: Draw a black rectangle if the sprite fails to load
+            g.setColor(Color.black);
+            g.fillRect(x, y, spriteWidth, spriteHeight);
+            // System.out.println("Drawing fallback rectangle at: (" + x + ", " + y + ")");
+            return;
+        }
 
-    // Draw the current sprite frame
-    g.drawImage(sprites[currentSpriteIndex], x, y, null);
+        g.drawImage(sprites[currentSpriteIndex], x, y, null);
+        System.out.println("Drawing sprite at: (" + x + ", " + y + ")");
     }
 
     @Override
