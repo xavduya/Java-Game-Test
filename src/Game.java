@@ -3,8 +3,9 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
-public class Game extends Canvas implements Runnable {
+public class Game extends JFrame implements Runnable {
 
     private static final long serialVersionUID = 1L;
 
@@ -15,23 +16,26 @@ public class Game extends Canvas implements Runnable {
     private BufferedImage image;
 
     public Game() {
+        setTitle("Cave Game - Play");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Add game components here
+        JPanel gamePanel = new JPanel();
+        gamePanel.setBackground(Color.BLACK);
+        add(gamePanel);
+
         handler = new Handler();
         box = new Box(100, 100); 
         handler.addObject(box);   
-
-        new Window(1920, 1080, "Untitled Game", this);
-        start();
 
         this.addKeyListener(new KeyInput(box)); 
         this.setFocusable(true);
         this.requestFocusInWindow();
 
-        // Load the image asset
-        try {
-            image = ImageIO.read(getClass().getResource("/assets/image.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setVisible(true);
+        start(); 
     }
 
     private void start() { 
@@ -92,13 +96,7 @@ public class Game extends Canvas implements Runnable {
         }
 
         Graphics g = bs.getDrawGraphics();
-        g.setColor(Color.cyan);
-        g.fillRect(0, 0, getWidth(), getHeight());
-
-        // Draw the loaded image
-        if (image != null) {
-            g.drawImage(image, 50, 50, null);
-        }
+        g.clearRect(0, 0, getWidth(), getHeight()); // Clear the screen
 
         handler.render(g);
 
@@ -106,7 +104,7 @@ public class Game extends Canvas implements Runnable {
         bs.show();
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         new Game();
     }
 }

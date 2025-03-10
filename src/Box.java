@@ -6,6 +6,7 @@ import javax.imageio.ImageIO;
 
 public class Box extends GameObject {
 
+    private BufferedImage spriteup, spritedown, spriteleft, spriteright;
     private BufferedImage[] sprites;
     private int currentSpriteIndex = 0; 
     private int spriteWidth = 32; 
@@ -18,43 +19,23 @@ public class Box extends GameObject {
 
     private void loadSprites() {
         try {
-            // Use an absolute file path (temporary workaround)
-            File file = new File("C:/Users/User/Desktop/Java Game Test/Assets/8-Directioal Gameboy Character Template/gif/all.gif");
-            System.out.println("Loading sprite sheet from: " + file.getAbsolutePath());
-    
-            // Check if the file exists
-            if (!file.exists()) {
-                System.out.println("File does not exist: " + file.getAbsolutePath());
-                return;
-            }
-    
-            // Check if the file is readable
-            if (!file.canRead()) {
-                System.out.println("File is not readable: " + file.getAbsolutePath());
-                return;
-            }
-    
-            // Load the sprite sheet
-            BufferedImage spriteSheet = ImageIO.read(file);
-            if (spriteSheet == null) {
-                System.out.println("Failed to load sprite sheet: ImageIO.read() returned null.");
-                return;
-            }
-    
-            // Print sprite sheet dimensions
-            System.out.println("Sprite sheet dimensions: " + spriteSheet.getWidth() + "x" + spriteSheet.getHeight());
-    
-            // Extract frames from the sprite sheet
+            // Load each sprite image
+            spriteup = ImageIO.read(new File("Assets/8-Directional Gameboy Character Template/gif/up.gif"));
+            spritedown = ImageIO.read(new File("Assets/8-Directional Gameboy Character Template/gif/down.gif"));
+            spriteleft = ImageIO.read(new File("Assets/8-Directional Gameboy Character Template/gif/left.gif"));
+            spriteright = ImageIO.read(new File("Assets/8-Directional Gameboy Character Template/gif/right.gif"));
+
+            // Initialize the sprites array
             sprites = new BufferedImage[4];
-            sprites[0] = spriteSheet.getSubimage(0, 0, spriteWidth, spriteHeight); // W
-            sprites[1] = spriteSheet.getSubimage(spriteWidth, 0, spriteWidth, spriteHeight); // S
-            sprites[2] = spriteSheet.getSubimage(0, spriteHeight, spriteWidth, spriteHeight); // A
-            sprites[3] = spriteSheet.getSubimage(spriteWidth, spriteHeight, spriteWidth, spriteHeight); // D
-    
-            System.out.println("Sprite sheet loaded successfully.");
+            sprites[0] = spriteup;
+            sprites[1] = spritedown;
+            sprites[2] = spriteleft;
+            sprites[3] = spriteright;
+
+            System.out.println("Sprites loaded successfully.");
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Failed to load sprite sheet: " + e.getMessage());
+            System.out.println("Failed to load sprites: " + e.getMessage());
         }
     }
 
@@ -72,10 +53,6 @@ public class Box extends GameObject {
         } else if (vely < 0) {
             currentSpriteIndex = 0; // Up W
         }
-
-        // Debug statements
-        System.out.println("Box position: (" + x + ", " + y + ")");
-        System.out.println("Current sprite index: " + currentSpriteIndex);
     }
 
     @Override
@@ -84,12 +61,10 @@ public class Box extends GameObject {
             // Fallback: Draw a black rectangle if the sprite fails to load
             g.setColor(Color.black);
             g.fillRect(x, y, spriteWidth, spriteHeight);
-            // System.out.println("Drawing fallback rectangle at: (" + x + ", " + y + ")");
             return;
         }
 
         g.drawImage(sprites[currentSpriteIndex], x, y, null);
-        System.out.println("Drawing sprite at: (" + x + ", " + y + ")");
     }
 
     @Override
