@@ -20,8 +20,6 @@ public class Game extends JFrame implements Runnable {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
-        // Add game components here
         JPanel gamePanel = new JPanel();
         gamePanel.setBackground(Color.BLACK);
         add(gamePanel);
@@ -76,7 +74,18 @@ public class Game extends JFrame implements Runnable {
             render(bs);
             frames++;
 
-            if (System.currentTimeMillis() - timer > 1000) {
+            long frameTime = System.nanoTime() - now;
+            long sleepTime = (long) (ns - frameTime) / 1_000_000;
+            
+            if(sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
                 System.out.println("FPS: " + frames);
                 frames = 0;

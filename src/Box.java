@@ -6,11 +6,15 @@ import javax.imageio.ImageIO;
 
 public class Box extends GameObject {
 
-    private BufferedImage spriteup, spritedown, spriteleft, spriteright;
-    private BufferedImage[] sprites;
-    private int currentSpriteIndex = 0; 
+    
+    private BufferedImage spriteSheet;
+    private BufferedImage sprites[][];
+    private int currentFrame = 0;
+    private int currentDirection = 0;
     private int spriteWidth = 32; 
     private int spriteHeight = 32; 
+    private int frameDelay = 5;
+    private int frameCounter = 0;
 
     public Box(int x, int y) {
         super(x, y);
@@ -19,23 +23,28 @@ public class Box extends GameObject {
 
     private void loadSprites() {
         try {
-            // Load each sprite image
-            spriteup = ImageIO.read(new File("Assets/8-Directional Gameboy Character Template/gif/up.gif"));
-            spritedown = ImageIO.read(new File("Assets/8-Directional Gameboy Character Template/gif/down.gif"));
-            spriteleft = ImageIO.read(new File("Assets/8-Directional Gameboy Character Template/gif/left.gif"));
-            spriteright = ImageIO.read(new File("Assets/8-Directional Gameboy Character Template/gif/right.gif"));
+           
+            spriteSheet = ImageIO.read(new File("Assets/Sprout Lands - Sprites - Basic pack/Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Spritesheet.png"));
 
-            // Initialize the sprites array
-            sprites = new BufferedImage[4];
-            sprites[0] = spriteup;
-            sprites[1] = spritedown;
-            sprites[2] = spriteleft;
-            sprites[3] = spriteright;
+            int rows = 4; 
+            int cols = 3;  
+            sprites = new BufferedImage[rows][cols];
+
+            for (int i = 0; i < rows; i++) {  
+                for (int j = 0; j < cols; j++) {  
+                    sprites[i][j] = spriteSheet.getSubimage(
+                        j * spriteWidth,  
+                        i * spriteHeight, 
+                        spriteWidth,     
+                        spriteHeight      
+                    );
+                }
+            }
 
             System.out.println("Sprites loaded successfully.");
         } catch (IOException e) {
+            System.err.println("Failed to load spritesheet: " + e.getMessage());
             e.printStackTrace();
-            System.out.println("Failed to load sprites: " + e.getMessage());
         }
     }
 
@@ -45,26 +54,36 @@ public class Box extends GameObject {
         y += vely;
 
         if (velx > 0) {
-            currentSpriteIndex = 3; // Right D
+            currentDirection = 3; // Right D
         } else if (velx < 0) {
-            currentSpriteIndex = 2; // Left A
+            currentDirection = 2; // Left A
         } else if (vely > 0) {
-            currentSpriteIndex = 1; // Down S
+            currentDirection = 1; // Down S
         } else if (vely < 0) {
-            currentSpriteIndex = 0; // Up W
+            currentDirection = 0; // Up W
+        }
+
+        if(velx != 0 || vely != 0) {
+            frameCounter++;
+            if(frameCounter >= frameDelay) {
+                currentFrame = (currentFrame + 1) %3;
+                frameCounter = 0;
+            } else {
+                currentFrame = 1;
+            }
         }
     }
 
     @Override
     public void render(Graphics g) {
-        if (sprites == null || sprites[currentSpriteIndex] == null) {
+        if (sprites [currentDirection][currentFrame] != null) {
+            g.drawImage(sprites[currentDirection][currentFrame],x,y,null);
+        } else {
             // Fallback: Draw a black rectangle if the sprite fails to load
             g.setColor(Color.black);
             g.fillRect(x, y, spriteWidth, spriteHeight);
             return;
         }
-
-        g.drawImage(sprites[currentSpriteIndex], x, y, null);
     }
 
     @Override

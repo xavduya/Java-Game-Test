@@ -16,7 +16,7 @@ public class MainMenu extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                ImageIcon backgroundImage = new ImageIcon("C:/Users/User/Desktop/Java Game Test/Assets/cave background.png");
+                ImageIcon backgroundImage = new ImageIcon("Assets/cave background.png");
                 g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
             }
         };
@@ -35,7 +35,7 @@ public class MainMenu extends JFrame {
         buttonPanel.setPreferredSize(new Dimension(200, 200)); 
         buttonPanel.setBounds(10,350, 250,200);
 
-        ImageIcon rectangleIcon = new ImageIcon("C:/Users/User/Desktop/Java Game Test/Assets/Rectangle.png");
+        ImageIcon rectangleIcon = new ImageIcon("Assets/Rectangle.png");
         JButton startButton = new JButton("Start Game", rectangleIcon);
         startButton.setHorizontalTextPosition(JButton.CENTER);
         startButton.setVerticalTextPosition(JButton.CENTER);
