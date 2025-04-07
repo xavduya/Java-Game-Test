@@ -19,10 +19,13 @@ public class Handler {
         }
     }
 
+    public void clearObjects() {
+        object.clear();
+    }
+
     public void addObject(GameObject tempObject) {
         object.add(tempObject);
     }
-
     public void removeObject(GameObject tempObject) {
         object.remove(tempObject);
     }

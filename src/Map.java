@@ -10,7 +10,7 @@ public class Map {
     private BufferedImage[][] tiles;
     private int tileSize;
 
-    public Map (String path, int tileSize) {
+    public Map(String path, int tileSize) {
         this.tileSize = tileSize;
 
         try {
@@ -19,10 +19,10 @@ public class Map {
             int col = tileSet.getWidth() / tileSize;
             tiles = new BufferedImage[rows][col];
 
-            for(int i = 0; i < rows; i++) 
-                for(int j = 0; j < col; j++)
-                tiles[i][j] = tileSet.getSubimage(j * tileSize, i * tileSize, tileSize, tileSize);
-        } catch(IOException e) {
+            for (int i = 0; i < rows; i++)
+                for (int j = 0; j < col; j++)
+                    tiles[i][j] = tileSet.getSubimage(j * tileSize, i * tileSize, tileSize, tileSize);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
