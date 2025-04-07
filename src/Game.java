@@ -261,10 +261,10 @@ public class Game extends JFrame implements Runnable {
         g.drawString("HP: " + box.getHealth(), 20, 60);
 
         // Score display
-        g.drawString("Score: " + score, getWidth() - 150, 40);
+        g.drawString("Score: " + score, getWidth() - 150, 60);
 
         // Wave information
-        g.drawString("Wave: " + currentWave, getWidth() - 150, 70);
+        g.drawString("Wave: " + currentWave, getWidth() - 150, 80);
 
         if (newWaveStarting) {
             // Show wave announcement

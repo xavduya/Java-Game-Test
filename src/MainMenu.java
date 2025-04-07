@@ -4,15 +4,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.Box;
 
 public class MainMenu extends JFrame {
     private Image backgroundImage;
     private static final String BACKGROUND_PATH = "Assets/cave_background.png";
     private static final String BUTTON_BG_PATH = "Assets/Rectangle.png";
+    private List<Integer> highScores = new ArrayList<>();
 
     public MainMenu() {
         initializeFrame();
         loadBackgroundImage();
+        loadHighScores(); // Load high scores when the menu starts
 
         JPanel backgroundPanel = createBackgroundPanel();
         JLabel titleLabel = createTitleLabel();
@@ -91,45 +97,94 @@ public class MainMenu extends JFrame {
 
         ImageIcon buttonBackground = loadButtonBackground();
 
-
         JButton startButton = createStyledButton("Start Game", buttonBackground, 10, 10);
-        JButton optionsButton = createStyledButton("Options", buttonBackground, 10, 70);
+        JButton highScoresButton = createStyledButton("High Scores", buttonBackground, 10, 70);
         JButton exitButton = createStyledButton("Exit", buttonBackground, 10, 130);
-
 
         startButton.addActionListener(e -> {
             dispose();
             new Game();
         });
 
-        optionsButton.addActionListener(e ->
-                JOptionPane.showMessageDialog(MainMenu.this, "Options not implemented yet.")
-        );
+        highScoresButton.addActionListener(e -> showHighScores());
 
         exitButton.addActionListener(e -> System.exit(0));
 
         buttonPanel.add(startButton);
-        buttonPanel.add(optionsButton);
+        buttonPanel.add(highScoresButton);
         buttonPanel.add(exitButton);
 
         return buttonPanel;
     }
 
+    private void showHighScores() {
+        // Create a panel to display the high scores
+        JPanel scoresPanel = new JPanel();
+        scoresPanel.setLayout(new BoxLayout(scoresPanel, BoxLayout.Y_AXIS));
+        scoresPanel.setBackground(new Color(0, 0, 0, 200));
+
+        JLabel titleLabel = new JLabel("TOP 10 HIGH SCORES");
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 24));
+        titleLabel.setForeground(Color.YELLOW);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        scoresPanel.add(titleLabel);
+
+        scoresPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        if (highScores.isEmpty()) {
+            JLabel noScoresLabel = new JLabel("No scores yet!");
+            noScoresLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+            noScoresLabel.setForeground(Color.WHITE);
+            noScoresLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            scoresPanel.add(noScoresLabel);
+        } else {
+            for (int i = 0; i < Math.min(highScores.size(), 10); i++) {
+                JLabel scoreLabel = new JLabel((i + 1) + ". " + highScores.get(i));
+                scoreLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+                scoreLabel.setForeground(Color.WHITE);
+                scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                scoresPanel.add(scoreLabel);
+            }
+        }
+
+        // Create a scroll pane if there are many scores
+        JScrollPane scrollPane = new JScrollPane(scoresPanel);
+        scrollPane.setPreferredSize(new Dimension(300, 400));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        JOptionPane.showMessageDialog(this, scrollPane, "High Scores", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    private void loadHighScores() {
+        // In a real application, you would load these from a file or database
+        // For now, we'll just create some dummy data
+        highScores.add(5000);
+        highScores.add(4200);
+        highScores.add(3800);
+        highScores.add(3500);
+        highScores.add(3200);
+        highScores.add(3000);
+        highScores.add(2800);
+        highScores.add(2500);
+        highScores.add(2200);
+        highScores.add(2000);
+
+        // Sort in descending order
+        Collections.sort(highScores, Collections.reverseOrder());
+    }
+
     private ImageIcon loadButtonBackground() {
         try {
-            // Try file path first
             File file = new File(BUTTON_BG_PATH);
             if (file.exists()) {
                 return new ImageIcon(BUTTON_BG_PATH);
             }
 
-            // Try resource path
             URL resourceUrl = getClass().getResource("/" + BUTTON_BG_PATH);
             if (resourceUrl != null) {
                 return new ImageIcon(resourceUrl);
             }
 
-            // Try alternative path format
             resourceUrl = getClass().getResource("/Assets/Rectangle.png");
             if (resourceUrl != null) {
                 return new ImageIcon(resourceUrl);
@@ -152,9 +207,5 @@ public class MainMenu extends JFrame {
         button.setFont(new Font("Serif", Font.PLAIN, 24));
         button.setForeground(Color.WHITE);
         return button;
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainMenu::new);
     }
 }
