@@ -49,6 +49,14 @@ public class KeyInput implements KeyListener {
         if (key == bindings.ATTACK) {
             box.attack();
         }
+
+        if (key == KeyEvent.VK_P) {
+            game.togglePause();
+        }
+
+        if (game.showControls && (key != KeyEvent.VK_P)) {
+            game.startGame();
+        }
     }
 
     @Override

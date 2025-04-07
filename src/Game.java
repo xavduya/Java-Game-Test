@@ -23,6 +23,10 @@ public class Game extends JFrame implements Runnable {
     private Font uiFont = new Font("Serif", Font.BOLD, 24);
     private int score = 0;
     private int restartTimer = 0;
+    private boolean gamePaused = true;
+    boolean showControls = true;
+    private final Font controlsFont = new Font("Arial", Font.BOLD, 24);
+    private final Font titleFont = new Font("Arial", Font.PLAIN, 48);
 
     // Wave system variables
     private int currentWave = 1;
@@ -42,6 +46,7 @@ public class Game extends JFrame implements Runnable {
     private static final int SCORE_FOR_WAVE_BONUS = 500;
     private static final float ENEMY_DIFFICULTY_MULTIPLIER = 0.2f; // Increases per wave
     private final int RESTART_DELAY = 180; // 3 seconds at 60fps
+
 
     public Game() {
         setTitle("Cave Game");
@@ -74,6 +79,11 @@ public class Game extends JFrame implements Runnable {
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (showControls) {
+                    startGame();
+                    return;
+                }
+
                 if (gameOver) {
                     resetGame();
                 } else if (resetButtonRect.contains(e.getPoint())) {
@@ -96,6 +106,7 @@ public class Game extends JFrame implements Runnable {
         start();
     }
 
+
     private void createPlatforms() {
         platforms.clear();
 
@@ -112,6 +123,7 @@ public class Game extends JFrame implements Runnable {
             handler.addObject(p);
         }
     }
+
 
     private void startWave(int waveNumber) {
         enemies.clear();
@@ -147,11 +159,13 @@ public class Game extends JFrame implements Runnable {
         newWaveMessageTimer = 120; // 2 seconds
     }
 
+
     private void start() {
         running = true;
         thread = new Thread(this);
         thread.start();
     }
+
 
     private void stop() {
         running = false;
@@ -161,6 +175,7 @@ public class Game extends JFrame implements Runnable {
             e.printStackTrace();
         }
     }
+
 
     public void run() {
         this.requestFocus();
@@ -216,9 +231,62 @@ public class Game extends JFrame implements Runnable {
         stop();
     }
 
+
+    private void drawPauseScreen(Graphics g) {
+        // Semi-transparent overlay
+        g.setColor(new Color(0, 0, 0, 200));
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        // Game title
+        g.setColor(Color.YELLOW);
+        g.setFont(titleFont);
+        String title = "CAVE GAME";
+        int titleWidth = g.getFontMetrics().stringWidth(title);
+        g.drawString(title, getWidth()/2 - titleWidth/2, getHeight()/2 - 150);
+
+        // Controls header
+        g.setColor(Color.WHITE);
+        g.setFont(controlsFont);
+        String controlsHeader = "CONTROLS";
+        int headerWidth = g.getFontMetrics().stringWidth(controlsHeader);
+        g.drawString(controlsHeader, getWidth()/2 - headerWidth/2, getHeight()/2 - 80);
+
+        // Control instructions
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        String[] controls = {
+                "Move Left: A",
+                "Move Right: D",
+                "Jump: Space",
+                "Attack: J",
+                "",
+                "Press P to pause/unpause",
+                "",
+                "Click or press any key to start"
+        };
+
+        // Draw each control line
+        for (int i = 0; i < controls.length; i++) {
+            int lineWidth = g.getFontMetrics().stringWidth(controls[i]);
+            g.drawString(controls[i], getWidth()/2 - lineWidth/2, getHeight()/2 - 40 + (i * 30));
+        }
+    }
+
+
+    public void togglePause() {
+        gamePaused = !gamePaused;
+    }
+
+
+    public void startGame() {
+        gamePaused = false;
+        showControls = false;
+    }
+
+
     private void processInput() {
         keyInput.processJump();
     }
+
 
     public void render(BufferStrategy bs) {
         if (bs == null) {
@@ -242,11 +310,19 @@ public class Game extends JFrame implements Runnable {
 
         // Reset translation for UI elements
         g2d.translate(camera.getX(), camera.getY());
+
+        // Draw UI elements (score, health etc.)
         drawUI(g);
+
+        // Draw pause/controls screen if game is paused or showing controls
+        if (gamePaused || showControls) {
+            drawPauseScreen(g);
+        }
 
         g.dispose();
         bs.show();
     }
+
 
     private void drawUI(Graphics g) {
         // Reset button
@@ -316,7 +392,12 @@ public class Game extends JFrame implements Runnable {
         }
     }
 
+
     public void tick() {
+        if (gamePaused || showControls) {
+            return;
+        }
+
         if (gameOver) {
             restartTimer++;
             if (restartTimer >= RESTART_DELAY) {
@@ -344,6 +425,7 @@ public class Game extends JFrame implements Runnable {
         }
     }
 
+
     private void handleWaveSystem() {
         // Check if wave is complete
         if (waveInProgress && enemies.isEmpty()) {
@@ -361,6 +443,7 @@ public class Game extends JFrame implements Runnable {
             }
         }
     }
+
 
     private void keepPlayerInBounds() {
         if (box.getX() < camera.getX()) {
@@ -388,6 +471,7 @@ public class Game extends JFrame implements Runnable {
         }
     }
 
+
     private void handlePlayerPlatformCollisions() {
         box.setIsOnGround(false);
 
@@ -414,6 +498,7 @@ public class Game extends JFrame implements Runnable {
             }
         }
     }
+
 
     private void handleEnemyLogic() {
         Iterator<Enemy> enemyIterator = enemies.iterator();
@@ -466,6 +551,7 @@ public class Game extends JFrame implements Runnable {
             }
         }
     }
+
 
     private void resetGame() {
         restartTimer = 0;

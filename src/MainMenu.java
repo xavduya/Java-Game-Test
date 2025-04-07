@@ -81,7 +81,7 @@ public class MainMenu extends JFrame {
     }
 
     private JLabel createTitleLabel() {
-        JLabel titleLabel = new JLabel("Cave Adventure", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Cave Game", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 48));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setOpaque(false);
